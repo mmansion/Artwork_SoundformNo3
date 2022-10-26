@@ -4,19 +4,28 @@
 
 #define NUM_MODULES 16
 
-const int MAX_TIME_ON  = 10000; //10 sec
+const int MAX_TIME_ON  = 15000; //15 sec (frames disable heating after 10s)
 const int MIN_TIME_OFF = 30000; //30 sec
 const int MAX_TOGETHER_ON = 4; //no more than 4 on simultaneously
 
 // animation modes
-// 1 : step through relay_pins in order (base route)
-// 2 : todo, add more modes
+// 1 : figure 8 pattern
+// 2 : groups of 2
+// 3 : groups of 3
+// 4 : groups of 4
+// 5 : random picks
+// 6 : lightshow (no sound)
+
+
 int  mode = 1;
 
 //mode 1 settings
 int  m1_stepInc = 0;
 long m1_lastStepTime = 0;
 int  m1_waitAfterStep = 5000;
+int  m1_duration = 60000;
+
+int m4_stepInc = 0;
 
 /**************************************************************
   Positino Map
@@ -43,23 +52,71 @@ int  m1_waitAfterStep = 5000;
 #include "Module.h";
 Module *modules[NUM_MODULES];
 
-int relay_pins[NUM_MODULES] = { //base route
-  2,  // 0,  Pin D2   = Pos H4
-  3,  // 1,  Pin D3   = Pos G5
-  4,  // 2,  Pin D4   = Pos F4
-  5,  // 3,  Pin D5   = Pos E3
-  6,  // 4,  Pin D6   = Pos D2
-  7,  // 5,  Pin D7   = Pos C1
-  8,  // 6,  Pin D8   = Pos B0
-  9,  // 7,  Pin D9   = Pos A1
-  10, // 8,  Pin D10  = Pos A4
-  11, // 9,  Pin D11  = Pos B5
-  12, // 10, Pin D12  = Pos C4
-  13, // 11, Pin D13  = Pos D3
-  A0, // 12, Pin A0   = Pos E2
-  A1, // 13, Pin A1   = Pos F1
-  A2, // 14, Pin A2   = Pos G0
-  A3  // 15, Pin A3   = Pos H1
+int relay_pins[NUM_MODULES] = { 
+  
+  // figure 8 route:
+  
+  /*index: 0 - [ H4 ] - pin#:*/ 2,
+  /*index: 1 - [ G5 ] - pin#:*/ 3,
+  /*index: 2 - [ F4 ] - pin#:*/ 4,
+  /*index: 3 - [ E3 ] - pin#:*/ 5,
+  /*index: 4 - [ D2 ] - pin#:*/ 6,
+  /*index: 5 - [ C1 ] - pin#:*/ 7,
+  /*index: 6 - [ B0 ] - pin#:*/ 8,
+  /*index: 7 - [ A1 ] - pin#:*/ 9,
+  /*index: 8 - [ A4 ] - pin#:*/ 10,
+  /*index: 9 - [ B5 ] - pin#:*/ 11,
+  /*index: 10 -[ C4 ] - pin#:*/ 12,
+  /*index: 11 -[ D3 ] - pin#:*/ 13,
+  /*index: 12 -[ E2 ] - pin#:*/ A0,
+  /*index: 13 -[ F1 ] - pin#:*/ A1,
+  /*index: 14 -[ G0 ] - pin#:*/ A2,
+  /*index: 15 -[ H1 ] - pin#:*/ A3
+ };
+
+ int x2_groups[4][2] = { // TODO
+  { -1 /**/, -1 /**/}, 
+  { -1 /**/, -1 /**/}, 
+  { -1 /**/, -1 /**/},  
+  { -1 /**/, -1 /**/}, 
+ };
+
+ int x3_groups[4][3] = { // TODO
+  { -1 /**/, -1 /**/, -1 /**/},
+  { -1 /**/, -1 /**/, -1 /**/},
+  { -1 /**/, -1 /**/, -1 /**/},
+  { -1 /**/, -1 /**/, -1 /**/}
+ };
+
+ int x4_groups[9][4] = {
+  
+  // ON: 15s
+  {  3 /*E3*/,  2 /*F4*/,  1 /*G5*/,  0 /*H4*/ }, // zone 1
+  
+  // ON: 15s
+  {  7 /*A1*/,  6 /*B0*/,  5 /*C1*/,  4 /*D2*/ }, // zone 3
+
+  // REST: 15s
+  { -1 ,  -1 , -1 , -1 }, //off
+
+  // ON: 15s
+  { 12 /*E2*/, 13 /*F1*/, 14 /*G0*/, 15 /*H1*/ }, // zone 2
+
+  // ON: 15s
+  {  8 /*A4*/,  9 /*B5*/, 10 /*C4*/, 11 /*D3*/ }, // zone 4
+
+  // REST: 15s
+  { -1 ,  -1 , -1 , -1 }, //off
+
+  // ON: 15s
+  { 5  /*C1*/ ,  4 /*D2*/ ,  3 /*E3*/ ,  2 /*F4*/ }, // diagonal, exclude low (NW->SE)
+
+  // ON: 15s
+  { 10 /*C4*/ , 11 /*D3*/ , 12 /*E2*/ , 13 /*F1*/ }, // diagonal, exclude low (SW->NE)
+
+  // REST: 15s
+  { -1 ,  -1 , -1 , -1 }, //off
+  
  };
 
 void setup() {
@@ -99,9 +156,23 @@ void loop() {
           }
           break;
           
-       case 2: //mode no.2
+       case 2: //mode 2 = 2x groups
 
         // TODO
+        
+        break;
+
+       case 3: //mode 3 = 3x groups
+
+        // TODO
+        
+        break;
+
+       case 4: //mode 4 = 4x groups
+
+        // TODO
+
+       case 5: //mode 5 = lightning mode
         
         break;
     }
@@ -119,4 +190,8 @@ int getTotalOn() {
     if(modules[i]->isOn()) t++;
   }
   return t;
+}
+
+void changeMode(int newMode) {
+  mode = newMode;
 }
