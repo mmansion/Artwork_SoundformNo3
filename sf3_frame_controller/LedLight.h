@@ -17,9 +17,9 @@ class LedLight {
 };
 
 LedLight::LedLight(int pwm_pin) {
-  this->_pwm_pin = pwm_pin; //set pin
-  this->_brightness = 0;    // init brightness to 0
-  this->_brightness = 0;
+  this->_pwm_pin = pwm_pin;     //set pin
+  this->_brightness = 0;        // init brightness to 0
+  this->_targetBrightness = 0;  //init target brightness
 };
 
 void LedLight::update() {

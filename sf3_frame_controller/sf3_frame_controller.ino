@@ -137,6 +137,4 @@ void loop() {
     for(int i = 0; i < NUM_LIGHTS; i++) {
       leds[i]->update();
     }
-
-  delay(10);
 }
