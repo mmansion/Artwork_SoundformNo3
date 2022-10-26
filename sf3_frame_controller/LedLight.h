@@ -7,6 +7,7 @@ class LedLight {
     int  getBrightness();
     void setBrightness(int brightness);
     void setTargetBrightness(int targetBrightness);
+    void setLightningMode(bool onOff);
     
   private:
   
@@ -14,6 +15,7 @@ class LedLight {
     int _pwm_pin;
 
     int _targetBrightness;
+    bool _lightningMode = false;
 };
 
 LedLight::LedLight(int pwm_pin) {
@@ -23,27 +25,43 @@ LedLight::LedLight(int pwm_pin) {
 };
 
 void LedLight::update() {
-  
-  //animate to target brightness
-  if(this->_brightness != this->_targetBrightness) {
 
-    //fade in
-    if(this->_brightness < this->_targetBrightness) {
-      this->_brightness += FADE_INCREMENT; //increase
-      if(this->_brightness < 0) {
-        this->_brightness = 0;
+  if(this->_lightningMode) {
+
+    if(this->_brightness == 0) {
+      int glitch = random(RANDOM_LIGHTNING_ODDS); //0-ODDS
+      if(glitch == 0) {
+        this->_brightness = LIGHTNING_BRIGHTNESS;
       }
-
-    // fade out
-    } else if(this->_brightness > this->_targetBrightness) {
-      this->_brightness -= FADE_INCREMENT; //decrease
-      if(this->_brightness > MAX_BRIGHTNESS) {
-        this->_brightness = MAX_BRIGHTNESS;
+    } else {
+      this->_brightness-= LIGHTNING_FADE_SPEED; //fast fade
+      if(this->_brightness < 0) this->_brightness = 0;
+    }
+    
+  } else {
+    
+    //animate to target brightness
+    if(this->_brightness != this->_targetBrightness) {
+      
+      //fade in
+      if(this->_brightness < this->_targetBrightness) {
+        this->_brightness += FADE_SPEED; //increase
+        if(this->_brightness < 0) {
+          this->_brightness = 0;
+        }
+  
+      // fade out
+      } else if(this->_brightness > this->_targetBrightness) {
+        this->_brightness -= FADE_SPEED; //decrease
+        if(this->_brightness > MAX_BRIGHTNESS) {
+          this->_brightness = MAX_BRIGHTNESS;
+        }
       }
     }
   }
 
   analogWrite(this->_pwm_pin, this->_brightness);
+  
   delay(10); //pin set recovery time
 };
 
@@ -81,3 +99,7 @@ void LedLight::setTargetBrightness(int targetBrightness) {
     this->_targetBrightness = targetBrightness;
   }
 };
+
+void LedLight::setLightningMode(bool onOff) {
+  this->_lightningMode = onOff;
+}
