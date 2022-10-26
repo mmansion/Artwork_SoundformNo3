@@ -62,8 +62,6 @@ int relay_pins[NUM_MODULES] = { //base route
   A3  // 15, Pin A3   = Pos H1
  };
 
-
-
 void setup() {
   Serial.begin(115200);
   
@@ -114,6 +112,7 @@ void loop() {
     modules[i]->update();
   }
 }
+
 int getTotalOn() {
   int t = 0;
   for(int i = 0; i < NUM_MODULES; i++) {

@@ -1,5 +1,5 @@
 
-//represents frame module, from main controller perspective
+//represents a frame module, from main controller's perspective
 
 class Module {
   
@@ -44,7 +44,7 @@ void Module::turnOn() {
     this->_timeOn = millis();
     digitalWrite(this->_pin, LOW);
   } else {
-    Serial.println("Cannot turn ON module. It was not OFF for enough time.");
+    Serial.println("Cannot turn ON module. Not OFF for enough time.");
   }
 }
 
