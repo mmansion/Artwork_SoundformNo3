@@ -5,13 +5,13 @@
 #define NUM_MODULES 16
 
 const int MAX_TIME_ON  = 15000; //15 sec (frames disable heating after 10s)
-const int TIME_BETWEEN_MODES = 1000;
+const int TIME_BETWEEN_MODES = 20000; //20 sec
 
 
 int   totalModes = 5;
-long  modeDuration = 0; //initial
-int   mode = 0;//initialization 
+long  modeDuration = 10; //initial
 
+int  mode = 0;//initialization 
 bool freezeMode = false; //freezes on single mode selected above
 
 // animation modes
@@ -22,11 +22,13 @@ bool freezeMode = false; //freezes on single mode selected above
 // 5 : random picks then lighting
 
 //duration of modes
-const long  m1_duration = 30000; //chase
-const long  m2_duration = 0; //60000; //sequence
+const long  m1_duration = 20000; //skip
+const long  m2_duration = 60000; //chase
 const long  m3_duration = 0; //skip over
-const long  m4_duration = 180000;
+
+const long  m4_duration = 260000;
 const long  m5_duration = 180000;
+
 
 long modeStartTime = 0;
 
@@ -77,42 +79,42 @@ int relay_pins[NUM_MODULES] = {
   /*index: 15 -[ H1 ] {note: } - pin#:*/ A3
  };
 
- #define x4_groups_total 9 //IMPORTANT: set to length of groups
+ #define x4_groups_total 13 //IMPORTANT: set to length of groups
  
  int x4_groups[x4_groups_total][4] = {
-  {},
+
+  {-1, -1, -1, -1 },
   {/*A1*/ 7, /*C1*/ 5, /*E3*/   3, /*G5*/ 1}, //bridge (notes C,E,G,A)
-  
   {/*A4*/ 8, /*C4*/ 10, /*E2*/ 12, /*G0*/ 14}, //bridge (notes C,E,G,A)
-  
-  { 3 /*E3*/,   2 /*F4*/,   1 /*G5*/ ,  0 /*H4*/ }, // zone 1  (notes: C, E, G, A)
-  { /*D2*/4 ,  /*E3*/ 3,  /*B0*/ 6,  /*B5*/ 9 }, // zone 2
-   
-  { /*E2*/12 ,  /*D3*/ 11,  /*G0*/ 14, /*G5*/ }, // (notes: C, C, A, A)
-  { 12 /*E2*/,  13 /*F1*/,  14 /*G0*/ , 15 /*H1*/ }, // zone 2  (notes: C, E, G, A)
- 
- 
-  { 8 /*A4*/,   9 /*B5*/,   11 /*D3*/,  14 /*E2*/ }, // (notes: C, E, A, A)
-  
-  {  7 /*A1*/,   8 /*A4*/,   15 /*H1*/ ,  0 /*H4*/ },  // lows
-
-//NOT USED
-
+  {-1, -1, -1, -1 },
+  { 4 /*D2*/,   11 /*D3*/,   12 /*E2*/ ,  3 /*E3*/ }, // highs 
+  {-1, -1, -1, -1 },
+  {   3 /*E3*/,   2 /*F4*/,   1 /*G5*/ ,  0 /*H4*/ }, // zone 1  (notes: C, E, G, A)
+  {  /*E2*/12 ,  /*D3*/ 11,  /*G0*/ 14, /*G5*/ }, // (notes: C, C, A, A)
+  {  12 /*E2*/,  13 /*F1*/,  14 /*G0*/ , 15 /*H1*/ }, // zone 2  (notes: C, E, G, A)
+  {  /*D2*/4 ,  /*E3*/ 3,  /*B0*/ 6,  /*B5*/ 9 }, // zone 3
+//  {  12 /*E2*/,  13 /*F1*/,  14 /*G0*/ , 15 /*H1*/ }, // zone 2
+  {  7 /*A1*/,   6 /*B0*/,    5 /*C1*/,   4 /*D2*/ },  // zone 3
 //  {  8 /*A4*/,   9 /*B5*/,   10 /*C4*/,  11 /*D3*/ },  // zone 4
+    {  8 /*A4*/,   9 /*B5*/,   11 /*D3*/,  14 /*E2*/ }, // (notes: C, E, A, A)
+  
 //  {   5 /*C1*/ ,  4 /*D2*/ ,  3 /*E3*/ ,  2 /*F4*/ }, // diagonal, exclude low (NW->SE)
 //  {  10 /*C4*/ , 11 /*D3*/ , 12 /*E2*/ , 13 /*F1*/ }, // diagonal, exclude low (SW->NE)  
-//  {-1, -1, -1, -1 },
-//  {  12 /*E2*/,  13 /*F1*/,  14 /*G0*/ , 15 /*H1*/ }, // zone 2
+//   {-1, -1, -1, -1 },
+   
 //  {   4 /*D2*/,   11 /*D3*/,   12 /*E2*/ ,  3 /*E3*/ }, // highs
 //  {   10 /*C4*/,   5 /*C1*/,   13 /*F1*/ ,  2 /*F4*/ }, // mid-highs
 //  {   6 /*B0*/,   9 /*B5*/,   1 /*G5*/ ,  14 /*G0*/ },  // mids
+  
+    {   7 /*A1*/,   8 /*A4*/,   15 /*H1*/ ,  0 /*H4*/ },  // lows
+//    {-1, -1, -1, -1 },
+//    {   7 /*A1*/,   8 /*A4*/,   2 /*F4*/ ,  13 /*F1*/ },  // lows and mids
+//    {-1, -1, -1, -1 },
+//    {   7 /*A1*/,   8 /*A4*/,   1 /*G5*/ ,  14 /*G0*/ },  // lows and low-mids
+
 //  {-1, -1, -1, -1 },
-//  {   7 /*A1*/,   8 /*A4*/,   2 /*F4*/ ,  13 /*F1*/ },  // lows and mids
-//  {-1, -1, -1, -1 },
-//  {   7 /*A1*/,   8 /*A4*/,   1 /*G5*/ ,  14 /*G0*/ },  // lows and low-mids
-//  {-1, -1, -1, -1 },
-//  {-1, -1, -1, -1 },
-//  { /*A4*/ 8,   /*F1*/ 13,   /*E2*/ 12,  /*E3*/ 3 },  // special group test
+//   {-1, -1, -1, -1 },
+//   { /*A4*/ 8,   /*F1*/ 13,   /*E2*/ 12,  /*E3*/ 3 },  // special group test
  };
 
 
@@ -148,12 +150,12 @@ int  m1_chase_items[NUM_CHASE_ITEMS] = {
 //mode 2 settings
 int  m2_stepInc = -1; //winds up starting at 0
 long m2_lastStepTime = 0;
-int  m2_waitAfterStep = 5000;
+int  m2_waitAfterStep = 1000;
 
 //mode 4 settings
 int  m4_stepInc = -1; //winds up starting at 0
 long m4_lastStepTime = 0;
-int  m4_waitAfterStep = 10000; //must be more that 10s (only 4 at once)
+int  m4_waitAfterStep = 15000; //must be more that 10s (only 4 at once)
 
 //mode 5 settings (random picks, then leave on for lightning)
 int  m5_stepInc = 0;
@@ -190,13 +192,15 @@ void setup() {
 
 void loop() {
 
+  //cannot proceed if running too many at once
+//  if(getTotalOn() <= MAX_TOGETHER_ON) { 
 
     switch(mode) {
 
-      case 1: //mode no.1 (CHASE)
+      case 1: //mode no.1
 
           if(m1_countSteps<NUM_CHASE_ITEMS) {
-           
+            
             if(millis() - m1_lastStepTime > m1_waitAfterStep) {
               m1_lastStepTime = millis();//record time
   
@@ -208,14 +212,17 @@ void loop() {
           }
         }
           
-       case 2: //mode 2 : sequence, figure 8
+       case 2: //mode 2 : chase highs
 
-//          if(millis() - m2_lastStepTime > m2_waitAfterStep) {
-//            m2_lastStepTime = millis();//record time
-//            m2_stepInc++; //increment to next module
-//            int mod_index = m2_stepInc % NUM_MODULES;
-//            modules[mod_index]->turnOn(); //modules automatically turn off with module[x]->update()
-//          }
+          if(millis() - m2_lastStepTime > m2_waitAfterStep) {
+            
+            m2_lastStepTime = millis();//record time
+  
+            m2_stepInc++; //increment to next module
+            int mod_index = m2_stepInc % NUM_MODULES;
+            
+            modules[mod_index]->turnOn(); //modules automatically turn off with module[x]->update()
+          }
 
         break;
 
@@ -239,8 +246,6 @@ void loop() {
  
             for(int i = 0; i < 4; i++) {
               if(x4_groups[group_index][i] != -1) {
-                modules[ x4_groups[group_index][i] ]->turnOff(); 
-                delay(10);
                 modules[ x4_groups[group_index][i] ]->turnOn(); 
               } else {
                 Serial.println(".");
@@ -254,7 +259,9 @@ void loop() {
        case 5: //mode 5 = random picks
 
        if(millis() - m5_lastStepTime > m5_waitAfterStep) {
-            m5_lastStepTime = millis();//record tim
+        
+            m5_lastStepTime = millis();//record time
+
             if(getTotalOn() < NUM_MODULES) {
               int rand_index = 0;
               Serial.println("picking random index");
@@ -271,12 +278,14 @@ void loop() {
    
               if(!m5_random_picks[rand_index]) {
                  m5_random_picks[rand_index] = true; //record pick
-                 modules[rand_index]->leaveOn(); //modules automatically turn off with module[x]->update()
+                modules[rand_index]->leaveOn(); //modules automatically turn off with module[x]->update()
               } 
             }  
         }
+        
         break;
-     }
+    }
+//  }
 
   //update all modules (always run this last)
   for(int i = 0; i < NUM_MODULES; i++) {
@@ -294,56 +303,52 @@ void checkModeChange() {
 //  Serial.println(t);
   if(millis() - modeStartTime > modeDuration) {
 
+
     mode++;
     if(mode > totalModes) mode = 1;
     
     Serial.print("Switching to mode ");
     Serial.println(mode);
+
+    Serial.println("CHANGING MODES ---------------------------------");
+    Serial.println("Turning all off before mode change");
+    for(int i = 0; i < NUM_MODULES; i++) {
+      modules[i]->turnOff();
+    }
+
+    //reset random picks
+      for(int i = 0; i < NUM_MODULES; i++) {
+        m5_random_picks[i] = false;
+      }
+
     Serial.print("Delay ");
     Serial.println(TIME_BETWEEN_MODES);
     delay(TIME_BETWEEN_MODES);
     
-    
-   
-    modeStartTime = millis();
-     
     switch(mode) {
       
       case 1: //chase intro
-        Serial.println("-----------------");
-        for(int i = 0; i < NUM_MODULES; i++) {
-          delay(10);
-          modules[i]->turnOff();
-        }
-        Serial.println("-----------------");
         modeDuration = m1_duration;
-        m1_countSteps = 0;
+        modeStartTime = millis();
         break;
         
       case 2:
+        modeStartTime = millis();
         modeDuration = m2_duration;
         break;
         
       case 3:
+        modeStartTime = millis();
         modeDuration = m3_duration;
         break;
         
       case 4:
+        modeStartTime = millis();
         modeDuration = m4_duration;
         break;
         
       case 5:
-         for(int i = 0; i < NUM_MODULES; i++) {
-          delay(10);
-          modules[i]->turnOff();
-        }
-       //reset random picks
-        for(int i = 0; i < NUM_MODULES; i++) {
-          m5_random_picks[i] = false;
-        }
-
         modeDuration = m5_duration;
-        
         break;
     }
   }

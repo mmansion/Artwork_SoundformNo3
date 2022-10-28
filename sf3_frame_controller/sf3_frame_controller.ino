@@ -2,29 +2,29 @@
 // copyright - natura machina
 
 
-const int NUM_LIGHTS = 4; //fixed (don't change)
-const int FADE_SPEED = 5; //speed of fade
-const int MAX_BRIGHTNESS = 200; //0-255 pwm
-const int RELAY_MAX_TIME_ON = 10000;// ms
-const bool RANDOM_START_POS = false; //pick random side to start led animation
+const int   NUM_LIGHTS = 4; //fixed (don't change)
+const int   FADE_SPEED = 1; //speed of fade
+const int   MAX_BRIGHTNESS = 60; //0-255 pwm
+const int   RELAY_MAX_TIME_ON = 10000;// ms
+const bool  RANDOM_START_POS = true; //pick random side to start led animation
 
 const int RANDOM_LIGHTNING_ODDS = 100; //1 in # odds
-const int LIGHTNING_BRIGHTNESS = 80; //0-255 (less than max)
-const int LIGHTNING_FADE_SPEED = 10; //speed of fade in LIGHTNING mode
+const int LIGHTNING_BRIGHTNESS  = 50; //0-255 (less than max)
+const int LIGHTNING_FADE_SPEED  = 10; //speed of fade in LIGHTNING mode
 
 // pin assignments
 const int RELAY_PIN = A0;
 const int MOSFET_PINS[4] = { 3, 6, 9, 11 };
 
 long anim_start_times[9] {  //time to start each step (ms)
-    1000,  // fade in led 0
-    2000,  // fade in led 1
-    3000,  // fade in led 2
-    4000,  // fade in led 3
-    10500, // fade out led 0
-    11000, // fade out led 1
-    11500, // fade out led 2
-    12000, // fade out led 3 
+    3000,  // fade in led 0
+    5000,  // fade in led 1
+    7000,  // fade in led 2
+    9000,  // fade in led 3
+    11500, // fade out led 0
+    12000, // fade out led 1
+    12500, // fade out led 2
+    13000, // fade out led 3 
     60000, // LIGHTNING mode
 };
 
