@@ -72,6 +72,7 @@ void Module::turnOff() {
   this->_isOn = false;
   this->_timeOff = millis();
   digitalWrite(this->_pin, HIGH);
+  delay(10);
 }
 
 bool Module::isOn() {

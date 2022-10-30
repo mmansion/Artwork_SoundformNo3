@@ -1,12 +1,10 @@
 // soundform no.3, main controller
 // natura machina
 
-
 #define NUM_MODULES 16
 
 const int MAX_TIME_ON  = 15000; //15 sec (frames disable heating after 10s)
 const int TIME_BETWEEN_MODES = 1000;
-
 
 int   totalModes = 5;
 long  modeDuration = 0; //initial
@@ -130,7 +128,7 @@ int  m1_chase_items[NUM_CHASE_ITEMS] = {
   11 /*D3*/ ,
   // next level down
   2  /*F4*/,   
-  12 /*F1*/,     
+  13 /*F1*/,     
   5  /*C1*/,   
   10 /*C4*/,   
   // next level down
@@ -139,8 +137,8 @@ int  m1_chase_items[NUM_CHASE_ITEMS] = {
   6  /*B0*/,   
   9  /*B5*/, 
   // next level down
-  1  /*H4*/,   
-  14 /*H1*/,     
+  0  /*H4*/,   
+  15 /*H1*/,     
   7  /*A1*/,   
   8  /*A4*/,
 };
@@ -240,7 +238,7 @@ void loop() {
             for(int i = 0; i < 4; i++) {
               if(x4_groups[group_index][i] != -1) {
                 modules[ x4_groups[group_index][i] ]->turnOff(); 
-                delay(10);
+                delay(100);
                 modules[ x4_groups[group_index][i] ]->turnOn(); 
               } else {
                 Serial.println(".");
@@ -310,12 +308,15 @@ void checkModeChange() {
     switch(mode) {
       
       case 1: //chase intro
+      
         Serial.println("-----------------");
         for(int i = 0; i < NUM_MODULES; i++) {
-          delay(10);
           modules[i]->turnOff();
         }
+        
+        delay(10000);
         Serial.println("-----------------");
+        
         modeDuration = m1_duration;
         m1_countSteps = 0;
         break;
